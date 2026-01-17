@@ -12,8 +12,6 @@ export const authUser = async (req: AuthRequest, res: Response, next: NextFuncti
             return res.status(401).send("Please login!")
         }
         const decoded = jwt.verify(token, "shhhhArushi05@");
-        console.log("decoded from token", decoded)
-        //req.user = decoded
         let payload: jwt.JwtPayload;
         try {
 

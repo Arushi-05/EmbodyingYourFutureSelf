@@ -13,11 +13,7 @@ datasource db {
   provider = "postgresql"
 }
 
-enum Frequency {
-  daily
-  weekly
-  monthly
-}
+
 model User {
   id        Int      @id @default(autoincrement())
   email     String   @unique
@@ -27,6 +23,7 @@ model User {
   timezone  String   @default("UTC")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  
 }
 
 model Habit {
@@ -34,9 +31,18 @@ model Habit {
   user        User      @relation(fields: [userId], references: [id])
   userId      Int
   name        String
-  frequency   Frequency
   currentStreak Int     @default(0)
   lastCompleted DateTime?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+  completions   HabitCompletion[]
+}
+
+model HabitCompletion {
+  id          Int      @id @default(autoincrement())
+  habitId     Int
+  habit       Habit    @relation(fields: [habitId], references: [id])
+  completedAt DateTime @default(now())
+
+  @@index([habitId, completedAt])
 }

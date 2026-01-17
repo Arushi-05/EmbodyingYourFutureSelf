@@ -4,4 +4,3 @@ export interface AuthRequest extends Request {
   user?: { email: string; name: string; id: number; timezone: string };
 }
 
-export type Frequency = "daily" | "weekly" | "monthly";

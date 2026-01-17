@@ -1,21 +1,21 @@
 import { prisma } from '../client'
 import bcrypt from "bcrypt";
 import jwt from 'jsonwebtoken';
-import { getUpdatedStreak } from "../utils/habitFrequency";
-import type { Frequency } from "../utils/types";
+import { getUpdatedStreak, recomputeStreak } from "../utils/habitFrequency";
+
 export async function createHabitService({
   userId,
   name,
-  frequency,
+ 
 }: {
   userId: number;
   name: string;
-  frequency: "daily" | "weekly" | "monthly";
+ 
 }) {
   return prisma.habit.create({
     data: {
       name,
-      frequency,
+ 
       user: { connect: { id: userId } },
     },
   });
@@ -27,47 +27,191 @@ export async function getUserHabitsService(userId: number) {
     orderBy: { createdAt: "desc" },
   });
 }
-function normalizeFrequency(freq: string): Frequency {
-  const value = freq.toLowerCase();
-  if (value === "daily" || value === "weekly" || value === "monthly") {
-    return value;
+
+// export async function completeHabitService({
+//   habitId,
+//   userId,
+// }: {
+//   habitId: number;
+//   userId: number;
+// }) {
+
+//   const habit = await prisma.habit.findUnique({
+//     where: { id: habitId },
+//     select: {
+//       id: true,
+//       userId: true,
+//       frequency: true
+//     }
+//   });
+
+//   if (!habit) throw new Error("Habit not found");
+//   if (habit.userId !== userId) throw new Error("Forbidden");
+// /// complete with undo 
+//   await prisma.habitCompletion.create({
+//     data: { habitId }
+//   });
+  
+//   const completions = await prisma.habitCompletion.findMany({
+//     where: { habitId },
+//     orderBy: { completedAt: "desc" }
+//   });
+  
+//   const { streak, lastCompleted } =
+//     recomputeStreak(completions.map(c => c.completedAt), habit.frequency);
+  
+//     const updatedHabit = await prisma.habit.update({
+//       where: { id: habitId },
+//       data: {
+//         currentStreak: streak,
+//         lastCompleted
+//       }
+//     });
+  
+//     return updatedHabit;
+
+
+//   //streak increment logic which is not undo - safe:
+
+//   // const { shouldUpdate, newStreak } = getUpdatedStreak({
+//   //   frequency: normalizeFrequency(habit.frequency),
+//   //   currentStreak: habit.currentStreak,
+//   //   lastCompleted: habit.lastCompleted,
+//   //   userTimezone: habit.user.timezone,
+//   //   nowUTC: new Date(),
+//   // });
+
+//   // if (!shouldUpdate) return habit;
+//   // return prisma.habit.update({
+//   //   where: { id: habitId },
+//   //   data: {
+//   //     currentStreak: newStreak,
+//   //     lastCompleted: new Date(),
+//   //   },
+//   // });
+// }
+export async function completeHabitService(
+  habitId: number,
+  userId: number
+) {
+  // 1️⃣ Fetch habit & validate ownership
+  const habit = await prisma.habit.findUnique({
+    where: { id: habitId },
+    select: {
+      id: true,
+      name:true,
+      userId: true,
+    }
+  });
+
+  if (!habit) {
+    throw new Error("Habit not found");
   }
-  throw new Error("Invalid frequency");
+
+  if (habit.userId !== userId) {
+    throw new Error("Not authorized to complete this habit");
+  }
+
+  // 2️⃣ Create completion event (SOURCE OF TRUTH)
+  await prisma.habitCompletion.create({
+    data: { habitId }
+  });
+
+  // 3️⃣ Fetch full completion history (DESC order)
+  const completions = await prisma.habitCompletion.findMany({
+    where: { habitId },
+    orderBy: { completedAt: "desc" }
+  });
+
+  // 4️⃣ Recompute streak (DERIVED STATE)
+  const { streak, lastCompleted } = recomputeStreak(
+    completions.map(c => c.completedAt)
+  );
+
+  // 5️⃣ Update habit with derived state
+  const updatedHabit = await prisma.habit.update({
+    where: { id: habitId },
+    data: {
+      currentStreak: streak,
+      lastCompleted
+    }
+  });
+
+  return updatedHabit;
 }
-export async function completeHabitService({
-  habitId,
+
+export async function undoHabitService(
+  habitId: number,
+  userId: number
+) {
+
+  const habit = await prisma.habit.findUnique({
+    where: { id: habitId },
+    select: {
+      id: true,
+      userId: true
+    }
+  });
+
+  if (!habit) {
+    throw new Error("Habit not found");
+  }
+
+  if (habit.userId !== userId) {
+    throw new Error("Not authorized to undo this habit");
+  }
+
+
+  const latestCompletion = await prisma.habitCompletion.findFirst({
+    where: { habitId },
+    orderBy: { completedAt: "desc" }
+  });
+
+  if (!latestCompletion) {
+    throw new Error("Nothing to undo");
+  }
+
+  // 3️⃣ Delete latest completion event
+  await prisma.habitCompletion.delete({
+    where: { id: latestCompletion.id }
+  });
+
+  // 4️⃣ Fetch updated completion history
+  const completions = await prisma.habitCompletion.findMany({
+    where: { habitId },
+    orderBy: { completedAt: "desc" }
+  });
+
+  // 5️⃣ Recompute streak
+  const { streak, lastCompleted } = recomputeStreak(
+    completions.map(c => c.completedAt)
+  );
+
+  // 6️⃣ Update habit
+  const updatedHabit = await prisma.habit.update({
+    where: { id: habitId },
+    data: {
+      currentStreak: streak,
+      lastCompleted
+    }
+  });
+
+  return updatedHabit;
+}
+
+
+export async function deleteHabitService({habitId,
   userId,
 }: {
   habitId: number;
   userId: number;
-}) {
-
-  const habit = await prisma.habit.findUnique({
-    where: { id: habitId },
-    include: { user: { select: { timezone: true } } },
-  });
-
-  if (!habit) throw new Error("Habit not found");
-  if (habit.userId !== userId) throw new Error("Forbidden");
-
-  const { shouldUpdate, newStreak } = getUpdatedStreak({
-    frequency: normalizeFrequency(habit.frequency),
-    currentStreak: habit.currentStreak,
-    lastCompleted: habit.lastCompleted,
-    userTimezone: habit.user.timezone,
-    nowUTC: new Date(),
-  });
-
-  if (!shouldUpdate) return habit;
-  return prisma.habit.update({
-    where: { id: habitId },
-    data: {
-      currentStreak: newStreak,
-      lastCompleted: new Date(),
-    },
-  });
 }
+){
+  const deletedHabit= await prisma.habit.delete({
+    where: { id: habitId }
+  });
 
+}
 export async function createHashedPassword(password: string) {
   const hashed = await bcrypt.hash(password, 10);
   return hashed
@@ -102,5 +246,6 @@ export async function getJwtToken(user: { email: string; name: string }) {
 
   //res.send("New user added successfully.")
 }
+
 
 

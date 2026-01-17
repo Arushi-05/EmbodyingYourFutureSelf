@@ -1,14 +1,15 @@
-import {isSameDay,isYesterday,isSameWeek,isSameMonth,} from "date-fns";
+import {
+    isSameDay, isYesterday, subDays,
+} from "date-fns";
 import { toZonedTime } from "date-fns-tz";
-import type { Frequency } from "./types";
+
 export function getUpdatedStreak({
-    frequency,
     currentStreak,
     lastCompleted,
     userTimezone,
     nowUTC,
 }: {
-    frequency: Frequency;
+
     currentStreak: number;
     lastCompleted: Date | null;
     userTimezone: string;
@@ -21,33 +22,33 @@ export function getUpdatedStreak({
 
     let newStreak = currentStreak;
 
-    switch (frequency) {
-        case "daily":
-            if (lastUser && isSameDay(lastUser, nowUser)) {
-                return { shouldUpdate: false, newStreak };
-            }
-            newStreak =
-                lastUser && isYesterday(lastUser) ? newStreak + 1 : 1;
-            break;
+    if (lastUser && isSameDay(lastUser, nowUser)) {
+        return { shouldUpdate: false, newStreak };
+    }
+    newStreak = lastUser && isYesterday(lastUser) ? newStreak + 1 : 1;
+    return { shouldUpdate: true, newStreak };
+}
 
-        case "weekly":
-            if (
-                lastUser &&
-                isSameWeek(lastUser, nowUser, { weekStartsOn: 1 })
-            ) {
-                return { shouldUpdate: false, newStreak };
-            }
-            newStreak = lastUser ? newStreak + 1 : 1;
-            break;
+export function recomputeStreak(
+    completions: Date[],
+    now: Date = new Date()
+): { streak: number; lastCompleted: Date | null } {
 
-        case "monthly":
-            if (lastUser && isSameMonth(lastUser, nowUser)) {
-                return { shouldUpdate: false, newStreak };
-            }
-            newStreak = lastUser ? newStreak + 1 : 1;
-            break;
+    if (completions.length === 0) {
+        return { streak: 0, lastCompleted: null };
     }
 
-    return { shouldUpdate: true, newStreak };
+    let streak = 0;
+    let cursor = now;
+    while (true) {
+        if (!completions.some(c => isSameDay(c, cursor))) break;
+        streak++;
+        cursor = subDays(cursor, 1);
+    }
+
+    return {
+        streak,
+        lastCompleted: completions[0] ?? null
+    };
 }
 

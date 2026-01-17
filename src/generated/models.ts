@@ -10,4 +10,5 @@
  */
 export type * from './models/User.js'
 export type * from './models/Habit.js'
+export type * from './models/HabitCompletion.js'
 export type * from './commonInputTypes.js'

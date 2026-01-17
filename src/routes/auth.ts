@@ -6,34 +6,48 @@ import express from "express";
 import { validateSignup } from '../utils/validators'
 import type { Request, Response } from "express";
 import bcrypt from "bcrypt";
-import { createHashedPassword, signUpUser, getJwtToken, } from "../services/service"
+import { signUpUser, getJwtToken, } from "../services/service"
 const app = express();
 import type { AuthRequest } from '../utils/types'
+import { getTimezoneOffset } from "date-fns-tz";
 const router = Router();
 
 Intl.DateTimeFormat().resolvedOptions().timeZone;
 router.get("/", (req: Request, res: Response) => {
     res.send("Express + Prisma v7 API is running 🚀");
 });
-
+function toPublicUser(user: any) {
+    return {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      timezone: user.timezone,
+      createdAt:user.createdAt,
+      updatedAt:user.updatedAt
+    };
+  }
 router.post("/login", async (req: Request, res: Response) => {
     try {
         const { email, password } = req.body
         const loggedInUser = await prisma.user.findUnique({
             where: {
                 email: email
-            }
+            },
         })
         if (!loggedInUser) {
             throw new Error("User not found!")
         }
         const match = await bcrypt.compare(password, loggedInUser.password)
+        if (!match){
+            throw new Error("User not found! Please check the password.")
+
+        }
         if (match) {
             //const name=loggedInUser.name
             const token = await getJwtToken(loggedInUser)
             console.log("Login token", token)
             res.cookie("token", token)
-            res.json({ message: `${loggedInUser?.name} loggedin successfully` , loggedInUser})
+            res.json({ message: `${loggedInUser?.name} loggedin successfully` , user: toPublicUser(loggedInUser)})
         }
 
     } catch (err) {

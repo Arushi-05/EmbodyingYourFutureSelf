@@ -49,3 +49,8 @@ export type User = Prisma.UserModel
  * 
  */
 export type Habit = Prisma.HabitModel
+/**
+ * Model HabitCompletion
+ * 
+ */
+export type HabitCompletion = Prisma.HabitCompletionModel

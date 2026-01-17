@@ -3,20 +3,17 @@ import { Router } from "express";
 import { authUser } from "../middlewares/userAuth"
 import { prisma } from '../client'
 import express from "express";
-import type { Frequency } from "../utils/types";
 import type { Request, Response } from "express";
 const app = express();
-import { getUpdatedStreak } from "../utils/habitFrequency";
 import type { AuthRequest } from '../utils/types'
 const router = Router();
-const ALLOWED_FREQUENCIES = ["daily", "weekly", "monthly"] as const;
-import {completeHabit} from "../controllers/habit.controllers";
+import {completeHabitController, deleteHabit,undoHabitController} from "../controllers/habit.controllers";
 import { createHabitService, } from "../services/service";
 const IST = "Asia/Kolkata";
 
 router.post("/createhabit", authUser, async (req: AuthRequest, res: Response) => {
     try {
-        const { name, frequency } = req.body
+        const { name } = req.body
         if (typeof name !== "string" || name.trim().length === 0) {
             return res.status(400).json({ error: "Name is required and must be a non-empty string." });
         }
@@ -31,8 +28,7 @@ router.post("/createhabit", authUser, async (req: AuthRequest, res: Response) =>
         }
         const created = await createHabitService({
             userId,
-            name,
-            frequency,
+            name
         });
 
 
@@ -60,7 +56,8 @@ router.get("/habits", authUser, async (req: AuthRequest, res: Response) => {
     }
 });
 
-router.post("/habits/:id/complete", authUser, completeHabit);
-
-
+router.post("/habits/:id/complete", authUser, completeHabitController);
+router.post("/habits/:id/delete", authUser, deleteHabit);
+router.post("/habits/:id/undo", authUser, undoHabitController);
 export default router;
+

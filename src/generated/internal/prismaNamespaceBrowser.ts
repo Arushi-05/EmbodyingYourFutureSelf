@@ -52,7 +52,8 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   User: 'User',
-  Habit: 'Habit'
+  Habit: 'Habit',
+  HabitCompletion: 'HabitCompletion'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -88,7 +89,6 @@ export const HabitScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
   name: 'name',
-  frequency: 'frequency',
   currentStreak: 'currentStreak',
   lastCompleted: 'lastCompleted',
   createdAt: 'createdAt',
@@ -96,6 +96,15 @@ export const HabitScalarFieldEnum = {
 } as const
 
 export type HabitScalarFieldEnum = (typeof HabitScalarFieldEnum)[keyof typeof HabitScalarFieldEnum]
+
+
+export const HabitCompletionScalarFieldEnum = {
+  id: 'id',
+  habitId: 'habitId',
+  completedAt: 'completedAt'
+} as const
+
+export type HabitCompletionScalarFieldEnum = (typeof HabitCompletionScalarFieldEnum)[keyof typeof HabitCompletionScalarFieldEnum]
 
 
 export const SortOrder = {

@@ -42,7 +42,6 @@ export type HabitMinAggregateOutputType = {
   id: number | null
   userId: number | null
   name: string | null
-  frequency: $Enums.Frequency | null
   currentStreak: number | null
   lastCompleted: Date | null
   createdAt: Date | null
@@ -53,7 +52,6 @@ export type HabitMaxAggregateOutputType = {
   id: number | null
   userId: number | null
   name: string | null
-  frequency: $Enums.Frequency | null
   currentStreak: number | null
   lastCompleted: Date | null
   createdAt: Date | null
@@ -64,7 +62,6 @@ export type HabitCountAggregateOutputType = {
   id: number
   userId: number
   name: number
-  frequency: number
   currentStreak: number
   lastCompleted: number
   createdAt: number
@@ -89,7 +86,6 @@ export type HabitMinAggregateInputType = {
   id?: true
   userId?: true
   name?: true
-  frequency?: true
   currentStreak?: true
   lastCompleted?: true
   createdAt?: true
@@ -100,7 +96,6 @@ export type HabitMaxAggregateInputType = {
   id?: true
   userId?: true
   name?: true
-  frequency?: true
   currentStreak?: true
   lastCompleted?: true
   createdAt?: true
@@ -111,7 +106,6 @@ export type HabitCountAggregateInputType = {
   id?: true
   userId?: true
   name?: true
-  frequency?: true
   currentStreak?: true
   lastCompleted?: true
   createdAt?: true
@@ -209,7 +203,6 @@ export type HabitGroupByOutputType = {
   id: number
   userId: number
   name: string
-  frequency: $Enums.Frequency
   currentStreak: number
   lastCompleted: Date | null
   createdAt: Date
@@ -243,24 +236,24 @@ export type HabitWhereInput = {
   id?: Prisma.IntFilter<"Habit"> | number
   userId?: Prisma.IntFilter<"Habit"> | number
   name?: Prisma.StringFilter<"Habit"> | string
-  frequency?: Prisma.EnumFrequencyFilter<"Habit"> | $Enums.Frequency
   currentStreak?: Prisma.IntFilter<"Habit"> | number
   lastCompleted?: Prisma.DateTimeNullableFilter<"Habit"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Habit"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Habit"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  completions?: Prisma.HabitCompletionListRelationFilter
 }
 
 export type HabitOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   name?: Prisma.SortOrder
-  frequency?: Prisma.SortOrder
   currentStreak?: Prisma.SortOrder
   lastCompleted?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
+  completions?: Prisma.HabitCompletionOrderByRelationAggregateInput
 }
 
 export type HabitWhereUniqueInput = Prisma.AtLeast<{
@@ -270,19 +263,18 @@ export type HabitWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.HabitWhereInput | Prisma.HabitWhereInput[]
   userId?: Prisma.IntFilter<"Habit"> | number
   name?: Prisma.StringFilter<"Habit"> | string
-  frequency?: Prisma.EnumFrequencyFilter<"Habit"> | $Enums.Frequency
   currentStreak?: Prisma.IntFilter<"Habit"> | number
   lastCompleted?: Prisma.DateTimeNullableFilter<"Habit"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Habit"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Habit"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  completions?: Prisma.HabitCompletionListRelationFilter
 }, "id">
 
 export type HabitOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   name?: Prisma.SortOrder
-  frequency?: Prisma.SortOrder
   currentStreak?: Prisma.SortOrder
   lastCompleted?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -301,7 +293,6 @@ export type HabitScalarWhereWithAggregatesInput = {
   id?: Prisma.IntWithAggregatesFilter<"Habit"> | number
   userId?: Prisma.IntWithAggregatesFilter<"Habit"> | number
   name?: Prisma.StringWithAggregatesFilter<"Habit"> | string
-  frequency?: Prisma.EnumFrequencyWithAggregatesFilter<"Habit"> | $Enums.Frequency
   currentStreak?: Prisma.IntWithAggregatesFilter<"Habit"> | number
   lastCompleted?: Prisma.DateTimeNullableWithAggregatesFilter<"Habit"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Habit"> | Date | string
@@ -310,51 +301,50 @@ export type HabitScalarWhereWithAggregatesInput = {
 
 export type HabitCreateInput = {
   name: string
-  frequency: $Enums.Frequency
   currentStreak?: number
   lastCompleted?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutHabitsInput
+  completions?: Prisma.HabitCompletionCreateNestedManyWithoutHabitInput
 }
 
 export type HabitUncheckedCreateInput = {
   id?: number
   userId: number
   name: string
-  frequency: $Enums.Frequency
   currentStreak?: number
   lastCompleted?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  completions?: Prisma.HabitCompletionUncheckedCreateNestedManyWithoutHabitInput
 }
 
 export type HabitUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  frequency?: Prisma.EnumFrequencyFieldUpdateOperationsInput | $Enums.Frequency
   currentStreak?: Prisma.IntFieldUpdateOperationsInput | number
   lastCompleted?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutHabitsNestedInput
+  completions?: Prisma.HabitCompletionUpdateManyWithoutHabitNestedInput
 }
 
 export type HabitUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  frequency?: Prisma.EnumFrequencyFieldUpdateOperationsInput | $Enums.Frequency
   currentStreak?: Prisma.IntFieldUpdateOperationsInput | number
   lastCompleted?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  completions?: Prisma.HabitCompletionUncheckedUpdateManyWithoutHabitNestedInput
 }
 
 export type HabitCreateManyInput = {
   id?: number
   userId: number
   name: string
-  frequency: $Enums.Frequency
   currentStreak?: number
   lastCompleted?: Date | string | null
   createdAt?: Date | string
@@ -363,7 +353,6 @@ export type HabitCreateManyInput = {
 
 export type HabitUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  frequency?: Prisma.EnumFrequencyFieldUpdateOperationsInput | $Enums.Frequency
   currentStreak?: Prisma.IntFieldUpdateOperationsInput | number
   lastCompleted?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -374,7 +363,6 @@ export type HabitUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  frequency?: Prisma.EnumFrequencyFieldUpdateOperationsInput | $Enums.Frequency
   currentStreak?: Prisma.IntFieldUpdateOperationsInput | number
   lastCompleted?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -395,7 +383,6 @@ export type HabitCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   name?: Prisma.SortOrder
-  frequency?: Prisma.SortOrder
   currentStreak?: Prisma.SortOrder
   lastCompleted?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -412,7 +399,6 @@ export type HabitMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   name?: Prisma.SortOrder
-  frequency?: Prisma.SortOrder
   currentStreak?: Prisma.SortOrder
   lastCompleted?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -423,7 +409,6 @@ export type HabitMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   name?: Prisma.SortOrder
-  frequency?: Prisma.SortOrder
   currentStreak?: Prisma.SortOrder
   lastCompleted?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -434,6 +419,11 @@ export type HabitSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   currentStreak?: Prisma.SortOrder
+}
+
+export type HabitScalarRelationFilter = {
+  is?: Prisma.HabitWhereInput
+  isNot?: Prisma.HabitWhereInput
 }
 
 export type HabitCreateNestedManyWithoutUserInput = {
@@ -478,31 +468,41 @@ export type HabitUncheckedUpdateManyWithoutUserNestedInput = {
   deleteMany?: Prisma.HabitScalarWhereInput | Prisma.HabitScalarWhereInput[]
 }
 
-export type EnumFrequencyFieldUpdateOperationsInput = {
-  set?: $Enums.Frequency
-}
-
 export type NullableDateTimeFieldUpdateOperationsInput = {
   set?: Date | string | null
 }
 
+export type HabitCreateNestedOneWithoutCompletionsInput = {
+  create?: Prisma.XOR<Prisma.HabitCreateWithoutCompletionsInput, Prisma.HabitUncheckedCreateWithoutCompletionsInput>
+  connectOrCreate?: Prisma.HabitCreateOrConnectWithoutCompletionsInput
+  connect?: Prisma.HabitWhereUniqueInput
+}
+
+export type HabitUpdateOneRequiredWithoutCompletionsNestedInput = {
+  create?: Prisma.XOR<Prisma.HabitCreateWithoutCompletionsInput, Prisma.HabitUncheckedCreateWithoutCompletionsInput>
+  connectOrCreate?: Prisma.HabitCreateOrConnectWithoutCompletionsInput
+  upsert?: Prisma.HabitUpsertWithoutCompletionsInput
+  connect?: Prisma.HabitWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.HabitUpdateToOneWithWhereWithoutCompletionsInput, Prisma.HabitUpdateWithoutCompletionsInput>, Prisma.HabitUncheckedUpdateWithoutCompletionsInput>
+}
+
 export type HabitCreateWithoutUserInput = {
   name: string
-  frequency: $Enums.Frequency
   currentStreak?: number
   lastCompleted?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  completions?: Prisma.HabitCompletionCreateNestedManyWithoutHabitInput
 }
 
 export type HabitUncheckedCreateWithoutUserInput = {
   id?: number
   name: string
-  frequency: $Enums.Frequency
   currentStreak?: number
   lastCompleted?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  completions?: Prisma.HabitCompletionUncheckedCreateNestedManyWithoutHabitInput
 }
 
 export type HabitCreateOrConnectWithoutUserInput = {
@@ -538,17 +538,69 @@ export type HabitScalarWhereInput = {
   id?: Prisma.IntFilter<"Habit"> | number
   userId?: Prisma.IntFilter<"Habit"> | number
   name?: Prisma.StringFilter<"Habit"> | string
-  frequency?: Prisma.EnumFrequencyFilter<"Habit"> | $Enums.Frequency
   currentStreak?: Prisma.IntFilter<"Habit"> | number
   lastCompleted?: Prisma.DateTimeNullableFilter<"Habit"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Habit"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Habit"> | Date | string
 }
 
+export type HabitCreateWithoutCompletionsInput = {
+  name: string
+  currentStreak?: number
+  lastCompleted?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutHabitsInput
+}
+
+export type HabitUncheckedCreateWithoutCompletionsInput = {
+  id?: number
+  userId: number
+  name: string
+  currentStreak?: number
+  lastCompleted?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type HabitCreateOrConnectWithoutCompletionsInput = {
+  where: Prisma.HabitWhereUniqueInput
+  create: Prisma.XOR<Prisma.HabitCreateWithoutCompletionsInput, Prisma.HabitUncheckedCreateWithoutCompletionsInput>
+}
+
+export type HabitUpsertWithoutCompletionsInput = {
+  update: Prisma.XOR<Prisma.HabitUpdateWithoutCompletionsInput, Prisma.HabitUncheckedUpdateWithoutCompletionsInput>
+  create: Prisma.XOR<Prisma.HabitCreateWithoutCompletionsInput, Prisma.HabitUncheckedCreateWithoutCompletionsInput>
+  where?: Prisma.HabitWhereInput
+}
+
+export type HabitUpdateToOneWithWhereWithoutCompletionsInput = {
+  where?: Prisma.HabitWhereInput
+  data: Prisma.XOR<Prisma.HabitUpdateWithoutCompletionsInput, Prisma.HabitUncheckedUpdateWithoutCompletionsInput>
+}
+
+export type HabitUpdateWithoutCompletionsInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  currentStreak?: Prisma.IntFieldUpdateOperationsInput | number
+  lastCompleted?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutHabitsNestedInput
+}
+
+export type HabitUncheckedUpdateWithoutCompletionsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  userId?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  currentStreak?: Prisma.IntFieldUpdateOperationsInput | number
+  lastCompleted?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
 export type HabitCreateManyUserInput = {
   id?: number
   name: string
-  frequency: $Enums.Frequency
   currentStreak?: number
   lastCompleted?: Date | string | null
   createdAt?: Date | string
@@ -557,52 +609,80 @@ export type HabitCreateManyUserInput = {
 
 export type HabitUpdateWithoutUserInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  frequency?: Prisma.EnumFrequencyFieldUpdateOperationsInput | $Enums.Frequency
   currentStreak?: Prisma.IntFieldUpdateOperationsInput | number
   lastCompleted?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  completions?: Prisma.HabitCompletionUpdateManyWithoutHabitNestedInput
 }
 
 export type HabitUncheckedUpdateWithoutUserInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  frequency?: Prisma.EnumFrequencyFieldUpdateOperationsInput | $Enums.Frequency
   currentStreak?: Prisma.IntFieldUpdateOperationsInput | number
   lastCompleted?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  completions?: Prisma.HabitCompletionUncheckedUpdateManyWithoutHabitNestedInput
 }
 
 export type HabitUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  frequency?: Prisma.EnumFrequencyFieldUpdateOperationsInput | $Enums.Frequency
   currentStreak?: Prisma.IntFieldUpdateOperationsInput | number
   lastCompleted?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
+
+/**
+ * Count Type HabitCountOutputType
+ */
+
+export type HabitCountOutputType = {
+  completions: number
+}
+
+export type HabitCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  completions?: boolean | HabitCountOutputTypeCountCompletionsArgs
+}
+
+/**
+ * HabitCountOutputType without action
+ */
+export type HabitCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the HabitCountOutputType
+   */
+  select?: Prisma.HabitCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * HabitCountOutputType without action
+ */
+export type HabitCountOutputTypeCountCompletionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.HabitCompletionWhereInput
+}
 
 
 export type HabitSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   userId?: boolean
   name?: boolean
-  frequency?: boolean
   currentStreak?: boolean
   lastCompleted?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  completions?: boolean | Prisma.Habit$completionsArgs<ExtArgs>
+  _count?: boolean | Prisma.HabitCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["habit"]>
 
 export type HabitSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   userId?: boolean
   name?: boolean
-  frequency?: boolean
   currentStreak?: boolean
   lastCompleted?: boolean
   createdAt?: boolean
@@ -614,7 +694,6 @@ export type HabitSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   id?: boolean
   userId?: boolean
   name?: boolean
-  frequency?: boolean
   currentStreak?: boolean
   lastCompleted?: boolean
   createdAt?: boolean
@@ -626,16 +705,17 @@ export type HabitSelectScalar = {
   id?: boolean
   userId?: boolean
   name?: boolean
-  frequency?: boolean
   currentStreak?: boolean
   lastCompleted?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type HabitOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "name" | "frequency" | "currentStreak" | "lastCompleted" | "createdAt" | "updatedAt", ExtArgs["result"]["habit"]>
+export type HabitOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "name" | "currentStreak" | "lastCompleted" | "createdAt" | "updatedAt", ExtArgs["result"]["habit"]>
 export type HabitInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  completions?: boolean | Prisma.Habit$completionsArgs<ExtArgs>
+  _count?: boolean | Prisma.HabitCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type HabitIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -648,12 +728,12 @@ export type $HabitPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   name: "Habit"
   objects: {
     user: Prisma.$UserPayload<ExtArgs>
+    completions: Prisma.$HabitCompletionPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     userId: number
     name: string
-    frequency: $Enums.Frequency
     currentStreak: number
     lastCompleted: Date | null
     createdAt: Date
@@ -1053,6 +1133,7 @@ readonly fields: HabitFieldRefs;
 export interface Prisma__HabitClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  completions<T extends Prisma.Habit$completionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Habit$completionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$HabitCompletionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1085,7 +1166,6 @@ export interface HabitFieldRefs {
   readonly id: Prisma.FieldRef<"Habit", 'Int'>
   readonly userId: Prisma.FieldRef<"Habit", 'Int'>
   readonly name: Prisma.FieldRef<"Habit", 'String'>
-  readonly frequency: Prisma.FieldRef<"Habit", 'Frequency'>
   readonly currentStreak: Prisma.FieldRef<"Habit", 'Int'>
   readonly lastCompleted: Prisma.FieldRef<"Habit", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"Habit", 'DateTime'>
@@ -1483,6 +1563,30 @@ export type HabitDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Interna
    * Limit how many Habits to delete.
    */
   limit?: number
+}
+
+/**
+ * Habit.completions
+ */
+export type Habit$completionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the HabitCompletion
+   */
+  select?: Prisma.HabitCompletionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the HabitCompletion
+   */
+  omit?: Prisma.HabitCompletionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.HabitCompletionInclude<ExtArgs> | null
+  where?: Prisma.HabitCompletionWhereInput
+  orderBy?: Prisma.HabitCompletionOrderByWithRelationInput | Prisma.HabitCompletionOrderByWithRelationInput[]
+  cursor?: Prisma.HabitCompletionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.HabitCompletionScalarFieldEnum | Prisma.HabitCompletionScalarFieldEnum[]
 }
 
 /**
