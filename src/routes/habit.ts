@@ -9,7 +9,7 @@ import type { AuthRequest } from '../utils/types'
 const router = Router();
 import {completeHabitController, deleteHabit,undoHabitController} from "../controllers/habit.controllers";
 import { createHabitService, } from "../services/service";
-const IST = "Asia/Kolkata";
+
 
 router.post("/createhabit", authUser, async (req: AuthRequest, res: Response) => {
     try {
@@ -59,5 +59,6 @@ router.get("/habits", authUser, async (req: AuthRequest, res: Response) => {
 router.post("/habits/:id/complete", authUser, completeHabitController);
 router.post("/habits/:id/delete", authUser, deleteHabit);
 router.post("/habits/:id/undo", authUser, undoHabitController);
+
 export default router;
 

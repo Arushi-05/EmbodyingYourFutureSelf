@@ -28,68 +28,7 @@ export async function getUserHabitsService(userId: number) {
   });
 }
 
-// export async function completeHabitService({
-//   habitId,
-//   userId,
-// }: {
-//   habitId: number;
-//   userId: number;
-// }) {
 
-//   const habit = await prisma.habit.findUnique({
-//     where: { id: habitId },
-//     select: {
-//       id: true,
-//       userId: true,
-//       frequency: true
-//     }
-//   });
-
-//   if (!habit) throw new Error("Habit not found");
-//   if (habit.userId !== userId) throw new Error("Forbidden");
-// /// complete with undo 
-//   await prisma.habitCompletion.create({
-//     data: { habitId }
-//   });
-  
-//   const completions = await prisma.habitCompletion.findMany({
-//     where: { habitId },
-//     orderBy: { completedAt: "desc" }
-//   });
-  
-//   const { streak, lastCompleted } =
-//     recomputeStreak(completions.map(c => c.completedAt), habit.frequency);
-  
-//     const updatedHabit = await prisma.habit.update({
-//       where: { id: habitId },
-//       data: {
-//         currentStreak: streak,
-//         lastCompleted
-//       }
-//     });
-  
-//     return updatedHabit;
-
-
-//   //streak increment logic which is not undo - safe:
-
-//   // const { shouldUpdate, newStreak } = getUpdatedStreak({
-//   //   frequency: normalizeFrequency(habit.frequency),
-//   //   currentStreak: habit.currentStreak,
-//   //   lastCompleted: habit.lastCompleted,
-//   //   userTimezone: habit.user.timezone,
-//   //   nowUTC: new Date(),
-//   // });
-
-//   // if (!shouldUpdate) return habit;
-//   // return prisma.habit.update({
-//   //   where: { id: habitId },
-//   //   data: {
-//   //     currentStreak: newStreak,
-//   //     lastCompleted: new Date(),
-//   //   },
-//   // });
-// }
 export async function completeHabitService(
   habitId: number,
   userId: number
